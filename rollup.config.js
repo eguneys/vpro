@@ -10,6 +10,8 @@ import htmlTemplate from 'rollup-plugin-generate-html-template'
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
 
+import { string } from 'rollup-plugin-string'
+
 import { terser }  from 'rollup-plugin-terser'
 
 let extensions = ['.ts', '.tsx']
@@ -37,6 +39,9 @@ export default args => {
       babel({ extensions, babelHelpers: 'bundled' }),
       css({minify: prod }),
       copy({ targets: [{ src: 'assets', dest: 'dist' }], copyOnce: true}),
+      string({
+        include: 'src/pls/*.pl'
+      }),
       htmlTemplate({
         template: 'src/index.html',
         target: 'index.html',

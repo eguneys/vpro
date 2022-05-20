@@ -1,55 +1,48 @@
-import { batch, createEffect, createSignal, createMemo, mapArray } from 'solid-js'
+import { createResource, batch, createEffect, createSignal, createMemo, mapArray } from 'solid-js'
 import { read, write, owrite } from './play'
 import { Vec2 } from 'soli2d'
-import Tau from './tau'
+import tau from './tau'
+import session1 from './pls/session1.pl'
 
 export type OAtom = string
 export type OPair = Array<Atom|OPair>
 
+function fact(name: string, value: string) {
+  return `${name} ${value}`
+}
+
+
 export class Game {
 
   get atoms() {
-    return this.a_atoms.values
+    return this.m_atoms()
   }
 
   get selected_atoms() {
     return this.atoms.filter(_ => _.selected)
   }
 
-  get logs() {
-    return this.a_logs.values
-  }
-
   constructor() {
 
-    this.tau = new Tau()
-    this.a_logs = make_array([], make_log)
-    this.a_atoms = make_array([], _ => make_atom(this, _))
-    
-  }
+    let r_consult = createResource(session1, _ => tau.consult(_))
+    let r_files = createResource("file(X).", _ => tau.all(_))
 
+    let m_files = createMemo(() => {
+      let res = read(r_files)
 
-  async init() {
+      if (res) {
+        return res.X.map(file => fact("file", file))
+      }
+      return []
+    })
 
-    let session1 = `
-      :- dynamic(one/2).
-      session(1).
-    `
+    let m_atoms = createMemo(() => {
+      return m_files()
+    })
 
-    await this.tau.consult(session1)
-
-
-    let {X} = await this.tau.one("session(X).")
-    console.log(X[0])
-
-    await this.tau.one("assertz(one(1, 2)).")
-
-    let res = await this.tau.one("one(1, 2).")
-
-    console.log(res)
+    this.m_atoms = createMemo(mapArray(m_atoms, _ => make_atom(this, _)))
 
   }
-  
 
 }
 
@@ -60,22 +53,10 @@ function make_log(log: string) {
   }
 }
 
-const bare_atom = n => atom_key('a', n)
-const pair_atom = n => atom_key('p', n)
 
-function atom_key(type: string, name: string) {
-  let id = atom_id_gen()
+function make_atom(game: Game, atom: Atom) {
 
-  return `${id} ${type} ${name}`
-}
-
-function atom_itn(atom_key: AtomKey) {
-  return atom_key.split(' ')
-}
-
-function make_atom(game: Game, atom_key: AtomKey) {
-
-  let [id, type, name] = atom_itn(atom_key)
+  let [name, value] = atom.split(' ')
   let _name = createSignal(name)
 
   let pos = make_position(10, 10)

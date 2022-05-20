@@ -1,4 +1,4 @@
-export default class Tau {
+class Tau {
 
   constructor() {
     this.session = pl.create()
@@ -13,7 +13,7 @@ export default class Tau {
   }
 
 
-  query(query: string) {
+  _query(query: string) {
     let { session } = this
     return new Promise((resolve, reject) => {
       session.query(query, { success: resolve, error: reject })
@@ -31,17 +31,31 @@ export default class Tau {
   }
 
   one(query: string) {
-    return this.query(query).then(() => this.answer().then(_ => _ && format_format(_)))
+    return this._query(query).then(() => this.answer().then(_ => {
+      if (_ === 'true.') {
+        return true
+      }
+      if (_) {
+        return format_format(_)
+      }
+    }))
   }
 
 
   async all(query: string) {
 
-    await this.query(query)
+    await this._query(query)
 
     let res = ''
     for (let i = 0; i < 64; i++) {
       let _ = await this.answer()
+      if (typeof _ === 'boolean') {
+        if (res === '') {
+          return _
+        } else {
+          break
+        }
+      }
       if (_) {
         res += _
       } else {
@@ -65,3 +79,5 @@ function format_format(n: string) {
 
   return res
 }
+
+export default new Tau()

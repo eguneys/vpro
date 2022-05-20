@@ -8,40 +8,10 @@ import { read, owrite, DragDecay } from './play'
 
 const App = () => {
 
-
   let game = new Game()
 
-  let mouse
-
-  let $input
-
-  function onKeyUp(e: Event) {
-    if (e.keyCode === 13) {
-      game.add_atom($input.value)
-      $input.value = ''
-    }
-  }
-
-  onMount(() => {
-    game.init()
-      })
-
   return (<vpro>
-      <side>
-      <div>
-      Add Atom:
-      <input ref={$input} onKeyUp={onKeyUp} type="text"/>
-      </div>
-      <button onClick={() => game.pair_atoms()}>Pair atoms</button>
-      <div class="logs-wrap">
-        <ol class="log-messages">
-          <For each={game.logs}>{ log =>
-           <li><t>{log.value}</t></li>
-          }</For>
-        </ol>
-      </div>
-      </side>
-      <Grid game={game} atoms={game.atoms}/>
+    <Grid game={game} atoms={game.atoms}/>
       </vpro>)
 
 }
