@@ -125,11 +125,13 @@ const Atom = (props) => {
   })
 
   let klass = () => ['handle',
+      props.atom.dragging ? 'dragging' :'',
       props.atom.selected ? 'selected' :''
   ]
 
   return (<atom class={klass().join(' ')} style={style()}>
       {props.atom.name}
+      <span class="target"/>
       </atom>)
 }
 

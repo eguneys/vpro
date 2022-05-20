@@ -21,7 +21,15 @@ atom {
   box-shadow: 1px 1px 4px -2px black;
 }
 
-atom:hover::after {
+atom .target {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+}
+
+atom .target:after {
   content: '';
   position: absolute;
   top: 0;
@@ -29,6 +37,13 @@ atom:hover::after {
   width: 10px;
   height: 10px;
   background: orange;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+atom .target:hover:after,
+atom.dragging .target:after {
+  opacity: 100;
 }
 
 atom.selected {
