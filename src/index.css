@@ -18,7 +18,8 @@ atom {
   position: absolute;
   padding: 0.05em 0.5em;
   background: white;
-  box-shadow: 1px 1px 4px -2px black;
+  box-shadow: 0px 0px 4px -2px black;
+  transition: box-shadow 0.06s;
 }
 
 atom .target {
@@ -39,6 +40,7 @@ atom .target:after {
   background: orange;
   opacity: 0;
   transition: opacity 0.2s;
+  border-radius: 2px 0 0 0;
 }
 
 atom .target:hover:after,
@@ -47,8 +49,8 @@ atom.dragging .target:after {
 }
 
 atom.selected {
-  border: 2px solid orange;
   border-radius: 2px;
+  box-shadow: 0px 0px 2px 1px orange;
 }
 
 .selection {
