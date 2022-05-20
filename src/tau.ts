@@ -69,7 +69,7 @@ class Tau {
 
 function format_format(n: string) {
   let res = {}
-  n.replace('.', '').split(';').forEach(_ => {
+  n.replace('.', '').replace(/;$/, '').split(';').forEach(_ => {
     _.split(',').forEach(_ => {
       let [key, value] = _.trim().split(' = ')
       res[key] ||= []

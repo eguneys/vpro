@@ -1,8 +1,11 @@
-import { createResource, batch, createEffect, createSignal, createMemo, mapArray } from 'solid-js'
+import { ticks } from './shared'
+import { on, createResource, batch, createEffect, createSignal, createMemo, mapArray } from 'solid-js'
 import { read, write, owrite } from './play'
-import { Vec2 } from 'soli2d'
+import { loop, Vec2 } from 'soli2d'
+import { make_elapsed_r, make_interval } from './make_util'
 import tau from './tau'
-import session1 from './pls/session1.pl'
+import base0 from './pls/base0.pl'
+import session0 from './pls/session0.pl'
 
 export type OAtom = string
 export type OPair = Array<Atom|OPair>
@@ -11,6 +14,10 @@ function fact(name: string, value: string) {
   return `${name} ${value}`
 }
 
+function refetch(resource: Resource) {
+  let [_, { refetch }] = resource
+  refetch()
+}
 
 export class Game {
 
@@ -24,9 +31,26 @@ export class Game {
 
   constructor() {
 
-    let r_consult = createResource(session1, _ => tau.consult(_))
-    let r_files = createResource("file(X).", _ => tau.all(_))
+    let _update = createSignal([16, 16], { equals: false })
+    loop((dt, dt0) => { owrite(_update, [dt, dt0]) })
 
+    let m_update = () => read(_update)
+
+    let r_consult = createResource([base0, session0].join('\n'), _ => tau.consult(_))
+    let r_counter = createResource("counter(X).", _ => tau.one(_))
+
+
+
+    createEffect(on(r_counter[0], () => {
+      createEffect(on(make_interval(m_update, ticks.seconds), (value, prev) => {
+        if (!prev) { return }
+        tau.one("tick.").then(() => console.log('endtick') || tau.one("counter(X).").then(_ => console.log(_)))
+      }))
+    }))
+
+
+    /*
+    let r_files = createResource("file(X).", _ => tau.all(_))
     let m_files = createMemo(() => {
       let res = read(r_files)
 
@@ -35,9 +59,19 @@ export class Game {
       }
       return []
     })
+   */
+
+    let m_counter = createMemo(() => {
+      let res = read(r_counter)
+      if (res === true) {
+      } else if (res) {
+        return res.X.map(counter => fact("counter", counter))
+      }
+      return []
+    })
 
     let m_atoms = createMemo(() => {
-      return m_files()
+      return m_counter()
     })
 
     this.m_atoms = createMemo(mapArray(m_atoms, _ => make_atom(this, _)))
