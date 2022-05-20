@@ -15,7 +15,7 @@ function fact(name: string, value: string) {
 export class Game {
 
   get atoms() {
-    return this.m_atoms()
+    return this.m_atoms().sort((a, b) => a.dragging ? (b.dragging ? 0 : 1) : (b.dragging ? -1 : 0))
   }
 
   get selected_atoms() {
@@ -58,6 +58,7 @@ function make_atom(game: Game, atom: Atom) {
 
   let [name, value] = atom.split(' ')
   let _name = createSignal(name)
+  let _dragging = createSignal(false)
 
   let pos = make_position(10, 10)
 
@@ -82,7 +83,13 @@ function make_atom(game: Game, atom: Atom) {
     get selected() {
       return read(_selected)
     },
-    pos
+    pos,
+    get dragging() {
+      return read(_dragging)
+    },
+    set dragging(value: boolean) {
+      return owrite(_dragging, value)
+    }
   }
 
 }
@@ -102,7 +109,7 @@ export function make_position(x, y) {
     get y() { return read(_y) },
     set y(v: number) { owrite(_y, v) },
     set vs(vs: Vec2) { batch(() => {
-      owrite(_x, vs.x), owrite(_y, vs.y)
+      owrite(_x, _ => lerp(_, vs.x)), owrite(_y, _ => lerp(_, vs.y))
      })
     },
     get vs() { return m_vs() }
@@ -165,6 +172,9 @@ function in_rectangle(a: Rect, b: Rect) {
 }
 
 
+function lerp(a: number, b: number) {
+  return a + (b - a) * 0.5
+}
 
 
 const make_id_gen = () => { let id = 0; return () => ++id }

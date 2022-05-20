@@ -31,6 +31,17 @@ const Grid = (props) => {
    let _update = createSignal([16, 16], { equals: false })
    let update = createMemo(() => read(_update))
 
+
+   createEffect(on(m_drag_decay, (value, prev) => {
+     if (value && !prev) {
+       value.target.dragging = true
+       }
+       if (!value && prev) {
+       prev.target.dragging = false
+       }
+    }))
+
+
    onMount(() => {
     let mouse = new Mouse($grid).init()
 
@@ -43,7 +54,6 @@ const Grid = (props) => {
 
       if (drag && !drag.move0) {
         let res = props.atoms.find(_ => _.on(...drag.start))
-        
         if (res) {
         owrite(_drag_decay, new DragDecay(drag, res.pos.vs, res))
         } else {
@@ -53,7 +63,6 @@ const Grid = (props) => {
         })
       })
 
-  // TODO abstract
   createEffect(() => {
     let decay = m_drag_decay()
     if (decay) {
@@ -73,7 +82,6 @@ const Grid = (props) => {
 
     if (decay) {
 
-
       createEffect(on(update, (dt, dt0) => {
     
       decay.target.vs = decay.translate.clone
@@ -90,6 +98,9 @@ const Grid = (props) => {
 
       })
 
+  const grid_style = () => ({
+      "font-size": "2em"
+  })
 
   const select_box_style = (start: Vec2, w: number, h: number) => ({
     transform: `translate(${start.x}px, ${start.y}px)`,
@@ -97,7 +108,7 @@ const Grid = (props) => {
     height: `${h}px`
     })
 
-  return (<grid ref={$grid}>
+  return (<grid ref={$grid} style={grid_style()}>
       <For each={props.atoms}>{ atom =>
         <Atom atom={atom}/>
       }</For>
