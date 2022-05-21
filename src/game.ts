@@ -46,12 +46,12 @@ export class Game {
   async dup_atom(atom: AtomView) {
     let _r = atom.ghost_rectangle
     this._atom_pos_hint = make_position(_r[0], _r[1])
-    await _pq(tau.one(`add_${atom.name}(${atom.value}).`))
+    await _pq(_ => tau.one(`add_${atom.name}(${atom.value}).`))()
     refetch(this.r_files)
   }
 
   async dispose_atom(atom: AtomView) {
-    let res = await _pq(tau.one(`remove_${atom.name}(${atom.value}).`))
+    let res = await _pq(_ => tau.one(`remove_${atom.name}(${atom.value}).`))()
     refetch(this.r_files)
   }
 

@@ -9,6 +9,19 @@ vpro {
   position: absolute;
 }
 
+
+.help {
+  background: #222;
+  color: white;
+  width: 30%;
+  height: 100%;
+  font-size: 1.6em;
+  padding: 1em;
+  box-sizing: border-box;
+  right: 0;
+  overflow: auto;
+}
+
 .files .file {
   position: absolute;
   color: #222;
@@ -44,7 +57,9 @@ atom {
 }
 
 atom .name,
-atom .ghost {
+atom .ghost,
+.help span.atom {
+  color: black;
   padding: 0.05em 0.5em;
   background: white;
   box-shadow: 0px 0px 4px -2px black;

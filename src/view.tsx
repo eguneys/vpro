@@ -6,6 +6,7 @@ import { make_wander } from './rigid'
 
 import { read, owrite, DragDecay } from './play'
 
+import { Help } from './help'
 
 const App = () => {
 
@@ -15,6 +16,7 @@ const App = () => {
     <Grid game={game} atoms={game.atoms}/>
     <Files game={game}/>
     <Flash game={game} flash={game.flash} />
+    <Help game={game} help={game.help}/>
   </vpro>)
 
 }
