@@ -2,7 +2,7 @@ import { ticks } from './shared'
 import { on, createResource, batch, createEffect, createSignal, createMemo, mapArray } from 'solid-js'
 import { read, write, owrite } from './play'
 import { loop, Vec2 } from 'soli2d'
-import { make_elapsed_r, make_interval } from './make_util'
+import { create_delayed, make_elapsed_r, make_interval } from './make_util'
 import tau from './tau'
 import base0 from './pls/base0.pl'
 import session0 from './pls/session0.pl'
@@ -129,12 +129,17 @@ function make_atom(game: Game, atom: Atom) {
   let [name, value] = atom.split(' ')
   let _name = createSignal(name)
   let _dragging = createSignal(false)
+  let _hovering = createSignal(false)
 
   let pos = make_position(10, 10)
 
   let m_rectangle = createMemo(() => [pos.x, pos.y, 30, 30])
 
   let _selected = createSignal(false)
+
+
+  let m_hovering = createMemo(() => read(_hovering))
+  let m_show_ghost = create_delayed(m_hovering, () => m_hovering() ? 0: ticks.half + ticks.lengths)
 
   return {
     get key() { return atom_key },
@@ -159,7 +164,18 @@ function make_atom(game: Game, atom: Atom) {
     },
     set dragging(value: boolean) {
       return owrite(_dragging, value)
+    },
+    get hovering() {
+      return read(_hovering)
+    },
+    set hovering(value: boolean) {
+      return owrite(_hovering, value)
+    },
+    get show_ghost() {
+      return m_show_ghost()
     }
+
+
   }
 
 }

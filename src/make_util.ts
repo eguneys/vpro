@@ -68,3 +68,27 @@ export function make_condition<A>(c: Accessor<boolean>, _a: Accessor<A> = () => 
 
   return createMemo(on(c, v => v ? _a() : _b()))
 }
+
+
+export function create_delayed<T>(accessor: () => T | undefined, delay: () => number) {
+
+  const _delayed = createSignal(accessor())
+
+  let i_timeout
+
+  createEffect(() => {
+    accessor()
+    let res = delay()
+
+    clearTimeout(i_timeout)
+    if (res !== undefined) {
+      i_timeout = setTimeout(() => {
+        owrite(_delayed, accessor())
+      }, res)
+    } else {
+      owrite(_delayed, undefined)
+    }
+  })
+
+  return () => read(_delayed)
+}

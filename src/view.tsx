@@ -76,6 +76,24 @@ const Grid = (props) => {
    let update = createMemo(() => read(_update))
 
 
+   let _hover_atom = createSignal()
+   let m_hover_atom = createMemo(() => read(_hover_atom))
+
+
+   // TODO abstract
+   createEffect(on(m_hover_atom, (value, prev) => {
+      if (value && !prev) {
+       value.hovering = true
+       }
+       if (!value && prev) {
+       prev.hovering = false
+       }
+       if (value && prev) {
+       prev.hovering = false
+       }
+       }))
+
+
    createEffect(on(m_drag_decay, (value, prev) => {
      if (value && !prev) {
        value.target.dragging = true
@@ -94,7 +112,18 @@ const Grid = (props) => {
 
       owrite(_update, [dt, dt0])
 
-      let { drag } = mouse
+      let { hover, drag } = mouse
+
+      if (hover) {
+        let res = props.atoms.find(_ => _.on(...hover))
+        if (res) {
+          owrite(_hover_atom, res)
+        } else {
+          owrite(_hover_atom, undefined)
+        }
+      } else {
+          owrite(_hover_atom, undefined)
+      }
 
       if (drag && !drag.move0) {
         let res = props.atoms.find(_ => _.on(...drag.start))
@@ -174,8 +203,11 @@ const Atom = (props) => {
   ]
 
   return (<atom class={klass().join(' ')} style={style()}>
-      {props.atom.name}
+      <span class="name">{props.atom.name}</span>
       <span class="target"/>
+      <Show when={props.atom.show_ghost}>
+        <span class="ghost">{props.atom.name}</span>
+      </Show>
       </atom>)
 }
 
