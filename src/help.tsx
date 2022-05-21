@@ -18,6 +18,58 @@ export const Help = (props) => {
 
 const Hello = () => {
   return (<>
+    <div class="long">
+      <p>
+
+      How can we state the fact that "right2 of a is c", "b is d", "c is e", "d is f", "e is g", "f is h". That is two rights of a file. We can enumerate all of the facts and write them manually, or spot the pattern: "Two rights of X is, as we imagine there exists a file Z where right of X is Z and right of Z is Y".
+    </p>
+    <p>
+    Try to state this fact, using the comma operator as and.
+    </p>
+    <p>
+     For extra practice, state <span class="atom">left2(X-Y)</span>, <span class="atom">up2(X-Y)</span> and <span class="atom">down2(X-Y)</span> facts. Get comfortable for the next challenge where we answer the fact that "righter to a to h is the list [b,c,d,e,f,g]".
+    </p>
+    </div>
+    </>)
+}
+
+const LeftWhenRightAnd = () => {
+  return (<>
+    <div class="long">
+    <p>
+
+    Let\'s tell machine "left of b is a" using the fact that "right of a is b".
+    Because for all the facts that "right of X is Y" it is also a fact that "left of Y is X".
+    </p>
+
+    <p>
+    <span class="atom"> left(X-Y) :- right(Y-X). </span>
+    </p>
+
+    <p>
+      Notice you can still state <span class="atom"> left(b-a). </span> manually for all files and machine will correspond the same.
+    </p>
+
+
+    <p>
+    <small>
+      If you use a variable that is not a file, like <span class="atom">left(apple, x).</span>, it is still a fact, but machine won\'t correspond, because it also checks for a fact that X and Y are files, and "left of X is Y" to correspond. Just an implicit extra rule. Like this: <span class="atom"> show_arrow(X, Y) :- left(X, Y), file(X), file(Y).</span> . To define the fact to show an arrow, three other facts are stated by a logical "and" clause, (by a comma), meaning that "show an arrow from X to Y when left of X is Y and X is a file and Y is a file".
+    </small>
+    </p>
+
+
+    <p>
+    <small>
+     If you want to practice, same concepts apply to 8 ranks, being they have up and down. So define the facts <span class="atom">rank(1)</span> thru 8. and <span class="atom">up(1-2)</span> and <span class="atom">down(X-Y)</span> in terms of up.
+    </small>
+    </p>
+    </div>
+
+    </>)
+}
+
+const RightOfFiles = () => {
+  return (<>
 <div class="short">
   <p>
    This gives order to files, because machine can answer "right of a is b".
