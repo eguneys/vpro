@@ -35,6 +35,11 @@ export class Game {
     return this.m_flash()
   }
 
+
+  get files() {
+    return this.m_files()
+  }
+
   constructor() {
     
     let _pq = pqueue()
@@ -70,6 +75,8 @@ export class Game {
       }
       return []
     })
+
+    this.m_files = createMemo(() => m_files().map(_ => _.split(' ')[1]))
 
     let m_time = createMemo(() => {
       let res = read(r_time)

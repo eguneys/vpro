@@ -27,7 +27,7 @@ const Files = (props) => {
 
 
   return (<div class="overlay files">
-      <For each={['a', 'b', 'c', 'd', 'e', 'f', 'g']}>{ file =>
+      <For each={props.game.files}>{ file =>
       <FloatAround update={props.game.m_update}>{ (x, y) =>
         <span style={style(x, y)} class="file">{file}</span>
       }</FloatAround>
