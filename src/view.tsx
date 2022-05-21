@@ -2,6 +2,7 @@ import { on, createEffect, createMemo, createSignal, onMount } from 'solid-js'
 import { Game, make_position } from './game'
 import { loop, Vec2 } from 'soli2d'
 import Mouse from './mouse'
+import { make_wander } from './rigid'
 
 import { read, owrite, DragDecay } from './play'
 
@@ -12,9 +13,43 @@ const App = () => {
 
   return (<vpro>
     <Grid game={game} atoms={game.atoms}/>
+    <Files game={game}/>
     <Flash game={game} flash={game.flash} />
       </vpro>)
 
+}
+
+const Files = (props) => {
+
+  const style = (x, y) => ({
+    transform: `translate(${x}px, ${y}px)`
+     })
+
+
+  return (<div class="overlay files">
+      <For each={['a', 'b', 'c', 'd', 'e', 'f', 'g']}>{ file =>
+      <FloatAround update={props.game.m_update}>{ (x, y) =>
+        <span style={style(x, y)} class="file">{file}</span>
+      }</FloatAround>
+      }</For>
+      </div>)
+}
+
+const FloatAround = (props) => {
+  
+  let w_wander = make_wander(Vec2.make(50, 50), {
+  mass: 1000,
+  air_friction: 0.8,
+  max_speed: 1,
+  max_force: 0.1 
+ })
+
+ let vs = createMemo(on(props.update, ([dt, dt0]) => {
+    w_wander.update(dt, dt0)
+    return Vec2.make(w_wander.x, w_wander.y)
+    }))
+
+  return createMemo(() => props.children(vs().x, vs().y))
 }
 
 const Flash = (props) => {

@@ -44,6 +44,8 @@ export class Game {
 
     let m_update = () => read(_update)
 
+    this.m_update = m_update
+
     let r_consult = createResource([base0, session1].join('\n'), _pq(_ => tau.consult(_)))
     let r_counter = createResource("counter(X).", _pq(_ => tau.one(_)))
     let r_time = createResource("time(X).", _pq(_ => tau.one(_)))
@@ -59,8 +61,7 @@ export class Game {
     }))
 
 
-    /*
-    let r_files = createResource("file(X).", _ => tau.all(_))
+    let r_files = createResource("file(X).", _pq(_ => tau.all(_)))
     let m_files = createMemo(() => {
       let res = read(r_files)
 
@@ -69,7 +70,6 @@ export class Game {
       }
       return []
     })
-   */
 
     let m_time = createMemo(() => {
       let res = read(r_time)
@@ -100,7 +100,7 @@ export class Game {
     })
 
     let m_atoms = createMemo(() => {
-      return []
+      return [...m_files()]
       return [...m_counter(), ...m_time()]
     })
 
