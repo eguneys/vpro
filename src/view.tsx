@@ -12,8 +12,17 @@ const App = () => {
 
   return (<vpro>
     <Grid game={game} atoms={game.atoms}/>
+    <Flash game={game} flash={game.flash} />
       </vpro>)
 
+}
+
+const Flash = (props) => {
+
+  return (<Show when={props.flash}>{ value =>
+    <div class="flash"> {value} </div>
+      }</Show>)
+  
 }
 
 

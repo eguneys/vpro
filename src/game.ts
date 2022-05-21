@@ -6,6 +6,7 @@ import { make_elapsed_r, make_interval } from './make_util'
 import tau from './tau'
 import base0 from './pls/base0.pl'
 import session0 from './pls/session0.pl'
+import session1 from './pls/session1.pl'
 
 export type OAtom = string
 export type OPair = Array<Atom|OPair>
@@ -29,22 +30,31 @@ export class Game {
     return this.atoms.filter(_ => _.selected)
   }
 
+
+  get flash() {
+    return this.m_flash()
+  }
+
   constructor() {
+    
+    let _pq = pqueue()
 
     let _update = createSignal([16, 16], { equals: false })
     loop((dt, dt0) => { owrite(_update, [dt, dt0]) })
 
     let m_update = () => read(_update)
 
-    let r_consult = createResource([base0, session0].join('\n'), _ => tau.consult(_))
-    let r_counter = createResource("counter(X).", _ => tau.one(_))
-
+    let r_consult = createResource([base0, session1].join('\n'), _pq(_ => tau.consult(_)))
+    let r_counter = createResource("counter(X).", _pq(_ => tau.one(_)))
+    let r_time = createResource("time(X).", _pq(_ => tau.one(_)))
 
 
     createEffect(on(r_counter[0], () => {
-      createEffect(on(make_interval(m_update, ticks.seconds), (value, prev) => {
+      createEffect(on(make_interval(m_update, ticks.seconds), async (value, prev) => {
         if (!prev) { return }
-        tau.one("tick.").then(() => console.log('endtick') || tau.one("counter(X).").then(_ => console.log(_)))
+        await tau.one("tick.")
+        refetch(r_time)
+        refetch(r_counter)
       }))
     }))
 
@@ -61,6 +71,16 @@ export class Game {
     })
    */
 
+    let m_time = createMemo(() => {
+      let res = read(r_time)
+      if (res === true) {
+      } else if (res) {
+        return res.X.map(time => fact("time", time))
+      }
+      return []
+    })
+
+
     let m_counter = createMemo(() => {
       let res = read(r_counter)
       if (res === true) {
@@ -70,12 +90,21 @@ export class Game {
       return []
     })
 
+
+    this.m_flash = createMemo(() => {
+      let res = read(r_counter)
+      if (res === true) {
+      } else if (res) {
+        return res.X[0]
+      }
+    })
+
     let m_atoms = createMemo(() => {
-      return m_counter()
+      return []
+      return [...m_counter(), ...m_time()]
     })
 
     this.m_atoms = createMemo(mapArray(m_atoms, _ => make_atom(this, _)))
-
   }
 
 }
@@ -229,5 +258,16 @@ export function point_xy(p: Point) {
 export const point_zero = point(0, 0)
 
 
+export function pqueue() {
+  let queue = Promise.resolve()
 
+
+  return (fn) => {
+    return _ => {
+      return new Promise((resolve, reject) => {
+        queue = queue.then(() => fn(_).then(resolve).catch(reject))
+      })
+    }
+  }
+}
 
