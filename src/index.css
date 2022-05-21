@@ -22,6 +22,13 @@ vpro {
   overflow: auto;
 }
 
+.help .long {
+  font-size: 0.75em;
+}
+
+.help span.atom {
+  white-space: nowrap;
+}
 .files .file {
   position: absolute;
   color: #222;
