@@ -28,8 +28,8 @@ export function read(signal) {
 
 
 export class DragDecay {
-  static make = (drag: MouseDrag, orig: Vec2, target: any) => {
-    return new DragDecay(drag, orig, target)
+  static make = (drag: MouseDrag, orig: Vec2, target: any, no_start: boolean = false) => {
+    return new DragDecay(drag, orig, target, no_start)
   }
 
 
@@ -48,8 +48,9 @@ export class DragDecay {
 
   constructor(readonly drag: MouseDrag,
               readonly orig: Vec2, 
-              readonly target: any) {
-                this.start = Vec2.make(...drag.start)
+              readonly target: any,
+              readonly no_start: boolean) {
+                this.start = Vec2.make(...(no_start ? drag.move : drag.start))
                 this.decay = orig.sub(this.start)
               }
 }

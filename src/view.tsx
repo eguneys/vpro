@@ -15,7 +15,7 @@ const App = () => {
     <Grid game={game} atoms={game.atoms}/>
     <Files game={game}/>
     <Flash game={game} flash={game.flash} />
-      </vpro>)
+  </vpro>)
 
 }
 
@@ -112,7 +112,20 @@ const Grid = (props) => {
 
       owrite(_update, [dt, dt0])
 
-      let { hover, drag } = mouse
+      let { click, hover, drag } = mouse
+
+
+      if (click) {
+      props.atoms.forEach(_ => {
+          if (_.on_close(...click)) {
+            _.dispose()
+          }
+          if (!_.on_full(...click)) { 
+          _.editing = false
+          }
+          })
+      }
+
 
       if (hover) {
         let res = props.atoms.find(_ => _.on(...hover))
@@ -125,7 +138,24 @@ const Grid = (props) => {
           owrite(_hover_atom, undefined)
       }
 
+      if (drag && !!drag.move0) {
+      let inject_drag = props.atoms.find(_ => _.on_inject_drag())
+
+       if (inject_drag) {
+        owrite(_drag_decay, new DragDecay(drag, inject_drag.pos.vs, inject_drag, true))
+       }
+      }
+
       if (drag && !drag.move0) {
+
+
+        let ghost = props.atoms.find(_ => _.on_ghost(...drag.start))
+
+        if (ghost) {
+          props.game.dup_atom(ghost)
+          return
+        }
+
         let res = props.atoms.find(_ => _.on(...drag.start))
         if (res) {
         owrite(_drag_decay, new DragDecay(drag, res.pos.vs, res))
@@ -202,13 +232,29 @@ const Atom = (props) => {
       props.atom.selected ? 'selected' :''
   ]
 
-  return (<atom class={klass().join(' ')} style={style()}>
-      <span class="name">{props.atom.name}</span>
+  return (<atom ref={_ => setTimeout(() => props.atom.$_ = _) } class={klass().join(' ')} style={style()}>
+      <span class="name">{props.atom.name}(
+      <Show when={props.atom.editing}
+       fallback={
+       <span class="value" onClick={_ => props.atom.editing = true}>{props.atom.value}</span>
+       }>
+       <FocusInput onKeyUp={(_, value) => props.atom.editing_name(_.keyCode, value) }/>
+       </Show>
+      )</span>
       <span class="target"/>
       <Show when={props.atom.show_ghost}>
-        <span class="ghost">{props.atom.name}</span>
+        <span ref={_ => setTimeout(() => props.atom.$ghost = _)} class="ghost">{props.atom.name}</span>
       </Show>
       </atom>)
+}
+
+const FocusInput = (props) => {
+let $ref
+  onMount(() => {
+
+$ref.focus()
+      })
+  return (<input ref={$ref} type="text" onKeyUp={_ => props.onKeyUp(_, $ref.value)}/>)
 }
 
 export default App

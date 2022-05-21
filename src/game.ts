@@ -20,10 +20,12 @@ function refetch(resource: Resource) {
   refetch()
 }
 
+let _pq = pqueue()
+
 export class Game {
 
   get atoms() {
-    return this.m_atoms().sort((a, b) => a.dragging ? (b.dragging ? 0 : 1) : (b.dragging ? -1 : 0))
+    return this.m_atoms().slice(0).sort((a, b) => a.dragging ? (b.dragging ? 0 : 1) : (b.dragging ? -1 : 0))
   }
 
   get selected_atoms() {
@@ -40,9 +42,21 @@ export class Game {
     return this.m_files()
   }
 
+
+  async dup_atom(atom: AtomView) {
+    let _r = atom.ghost_rectangle
+    this._atom_pos_hint = make_position(_r[0], _r[1])
+    await _pq(tau.one(`add_${atom.name}(${atom.value}).`))
+    refetch(this.r_files)
+  }
+
+  async dispose_atom(atom: AtomView) {
+    let res = await _pq(tau.one(`remove_${atom.name}(${atom.value}).`))
+    refetch(this.r_files)
+  }
+
   constructor() {
     
-    let _pq = pqueue()
 
     let _update = createSignal([16, 16], { equals: false })
     loop((dt, dt0) => { owrite(_update, [dt, dt0]) })
@@ -59,7 +73,7 @@ export class Game {
     createEffect(on(r_counter[0], () => {
       createEffect(on(make_interval(m_update, ticks.seconds), async (value, prev) => {
         if (!prev) { return }
-        await tau.one("tick.")
+        await _pq(_ => tau.one("tick."))
         refetch(r_time)
         refetch(r_counter)
       }))
@@ -76,6 +90,7 @@ export class Game {
       return []
     })
 
+    this.r_files = r_files
     this.m_files = createMemo(() => m_files().map(_ => _.split(' ')[1]))
 
     let m_time = createMemo(() => {
@@ -128,26 +143,85 @@ function make_atom(game: Game, atom: Atom) {
 
   let [name, value] = atom.split(' ')
   let _name = createSignal(name)
+  let _value = createSignal(value)
   let _dragging = createSignal(false)
   let _hovering = createSignal(false)
+  let _editing = createSignal()
 
-  let pos = make_position(10, 10)
+  let pos = game._atom_pos_hint || make_position(10, 10)
+
+
+  let _inject_drag = createSignal(game._atom_pos_hint)
+
+
+  let _$ = createSignal()
+  let _$_ghost = createSignal()
+
 
   let m_rectangle = createMemo(() => [pos.x, pos.y, 30, 30])
+  let m_close_rectangle = createMemo(() => [pos.x, pos.y, 10, 10])
+
+  let m_size = createMemo(() => read(_$)?.getBoundingClientRect())
+
+  let m_full_rectangle = createMemo(() => {
+    let rect = m_size()
+    if (rect) {
+      return [pos.x, pos.y, rect.width, rect.height]
+    } else {
+      return [pos.x, pos.y, 0, 0]
+    }
+  })
+
+  let m_ghost_rectangle = createMemo(() => {
+    let _ = read(_$_ghost)
+    if (_) {
+      let rect = _.getBoundingClientRect()
+      return [rect.left, rect.top, rect.width, rect.height]
+    } else {
+      return [0, 0, 0, 0]
+    }
+  })
 
   let _selected = createSignal(false)
 
 
+  let m_dragging = createMemo(() => read(_dragging))
   let m_hovering = createMemo(() => read(_hovering))
-  let m_show_ghost = create_delayed(m_hovering, () => m_hovering() ? 0: ticks.half + ticks.lengths)
+  let m_delayed_hovering = create_delayed(m_hovering, () => (m_dragging() || m_hovering()) ? 0: ticks.half + ticks.lengths)
+  let m_show_ghost = createMemo(() => !m_dragging() && m_delayed_hovering())
+
 
   return {
+    set $ghost(ref: HTMLElement) { owrite(_$_ghost, ref) },
+    set $_(ref: HTMLElement) { owrite(_$, ref) },
     get key() { return atom_key },
     get name() { return read(_name) },
+    get value() { return read(_value) },
     get x() { return pos.x },
     get y() { return pos.y },
+    on_close(x: number, y: number) {
+      return hit_rectangle(...m_close_rectangle(), x, y)
+    },
+    on_full(x: number, y: number) {
+      return hit_rectangle(...m_full_rectangle(), x, y)
+    },
     on(x: number, y: number) {
       return hit_rectangle(...m_rectangle(), x, y)
+    },
+    on_ghost(x: number, y: number) {
+      if (m_show_ghost()) {
+        return hit_rectangle(...m_ghost_rectangle(), x, y)
+      }
+    },
+    on_inject_drag() {
+      let res = read(_inject_drag)
+      if (res) {
+        owrite(_inject_drag, false)
+      }
+      return res
+    },
+    get ghost_rectangle() {
+      return m_ghost_rectangle()
     },
     in_rect(xy: Vec2, wh: Vec2) {
       return in_rectangle(m_rectangle(), [xy.x, xy.y, wh.x, wh.y])
@@ -171,11 +245,25 @@ function make_atom(game: Game, atom: Atom) {
     set hovering(value: boolean) {
       return owrite(_hovering, value)
     },
+    get editing() {
+      return read(_editing)
+    },
+    set editing(value: boolean) {
+      return owrite(_editing, value)
+    },
     get show_ghost() {
       return m_show_ghost()
+    },
+
+    editing_name(code: number, value: string) {
+      if (code === 13) {
+        owrite(_value, value)
+        this.editing = false
+      }
+    },
+    dispose() {
+      game.dispose_atom(this)
     }
-
-
   }
 
 }
@@ -198,7 +286,10 @@ export function make_position(x, y) {
       owrite(_x, _ => lerp(_, vs.x)), owrite(_y, _ => lerp(_, vs.y))
      })
     },
-    get vs() { return m_vs() }
+    get vs() { return m_vs() },
+    get clone() {
+      return make_position(read(_x), read(_y))
+    }
   }
 }
 

@@ -51,6 +51,15 @@ atom .ghost {
   transition: box-shadow 0.06s;
 }
 
+atom .name {
+  display: flex;
+}
+
+atom input {
+  font-size: 0.8em;
+  width: 6em;
+}
+
 atom .ghost {
   opacity : 0.5;
 }
