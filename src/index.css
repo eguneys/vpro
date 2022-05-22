@@ -71,9 +71,10 @@ atom {
   position: absolute;
 }
 
-atom .name,
+atom .wrap,
 atom .ghost,
 .help span.atom {
+  display: flex;
   color: black;
   padding: 0.05em 0.5em;
   background: white;

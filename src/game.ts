@@ -212,10 +212,10 @@ function make_atom(game: Game, atom: Atom) {
   let _hovering = createSignal(false)
   let _editing = createSignal()
 
-  let pos = game._atom_pos_hint || make_position(10, 10)
+  let pos = game._atom_pos_hint?.clone || make_position(10, 10)
 
 
-  let _inject_drag = createSignal(game._inject_drag && game._atom_pos_hint)
+  let _inject_drag = createSignal(game._inject_drag && game._atom_pos_hint?.clone)
 
   game._inject_drag = false
   game._atom_pos_hint = false
@@ -260,7 +260,7 @@ function make_atom(game: Game, atom: Atom) {
   createEffect(on(_value[0], async (value, prev) => {
     if (prev) {
       game.interaction('word_inside_paranthesis')
-      game._atom_pos_hint = pos
+      game._atom_pos_hint = pos.clone
       let res = await _pq(_ => tau.one(`change_${name}(${value}, ${prev}).`))()
 
       refetch(game.r_files)
