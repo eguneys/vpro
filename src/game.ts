@@ -51,6 +51,7 @@ export class Game {
   async dup_atom(atom: AtomView) {
     let _r = atom.ghost_rectangle
     this._atom_pos_hint = make_position(_r[0], _r[1])
+    this._inject_drag = true
     await _pq(_ => tau.one(`add_${atom.name}(${atom.value}).`))()
     refetch(this.r_files)
     this.interaction('dup_box')
@@ -66,8 +67,12 @@ export class Game {
   }
 
   async interaction(s: string) {
-    let res = await _pq(_ => tau.one(`assertz(interaction(${s})).`))()
+
+    // TODO optimize
+    // if (this.m_session() !== 1) { return }
+    let res = await _pq(_ => tau.one(`add_interaction(${s}).`))()
     this.help.refetch()
+    refetch(this.r_session)
   }
 
   constructor() {
@@ -149,13 +154,16 @@ export class Game {
 
     this.m_helps = createMemo(mapArray(m_helps, _ => make_help(this, _)))
 
-    let r_session = createResource("session(X, _).", _pq(_ => tau.one(_)))
+    let r_session = createResource("session(X, _).", _pq(_ => tau.all(_)))
 
+    this.r_session = r_session
     this.m_session = createMemo(() => {
       let res = read(r_session)
 
       if (res) {
-        return res.X[0]
+
+        console.log(res)
+        return Math.max(...res.X.map(_ => parseInt(_)))
       }
       return 1
     })
@@ -207,8 +215,10 @@ function make_atom(game: Game, atom: Atom) {
   let pos = game._atom_pos_hint || make_position(10, 10)
 
 
-  let _inject_drag = createSignal(game._atom_pos_hint)
+  let _inject_drag = createSignal(game._inject_drag && game._atom_pos_hint)
 
+  game._inject_drag = false
+  game._atom_pos_hint = false
 
   let _$ = createSignal()
   let _$_ghost = createSignal()
@@ -246,6 +256,17 @@ function make_atom(game: Game, atom: Atom) {
   let m_delayed_hovering = create_delayed(m_hovering, () => (m_dragging() || m_hovering()) ? 0: ticks.half + ticks.lengths)
   let m_show_ghost = createMemo(() => !m_dragging() && m_delayed_hovering())
 
+
+  createEffect(on(_value[0], async (value, prev) => {
+    if (prev) {
+      game.interaction('word_inside_paranthesis')
+      game._atom_pos_hint = pos
+      let res = await _pq(_ => tau.one(`change_${name}(${value}, ${prev}).`))()
+
+      refetch(game.r_files)
+
+    }
+  }))
 
   return {
     set $ghost(ref: HTMLElement) { owrite(_$_ghost, ref) },

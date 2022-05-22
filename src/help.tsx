@@ -129,23 +129,23 @@ const EightFilesAndOpenConsole = () => {
     </>)
 }
 
-const RenameAndFillFiles = () => {
+const RenameAndFillFiles = (props) => {
   return (<>
-      <p> 
+      <Paragraph> 
   These white boxes have a structure. 
-      </p>
-      <p>
+      </Paragraph>
+      <Paragraph completed={props.session.completed(1)}>
       Change the word inside paranthesis by clicking on it.
-      </p>
-    <p>
+      </Paragraph>
+    <Paragraph>
       Just put only lowercase english letters.
-    </p>
-    <p>
+    </Paragraph>
+    <Paragraph>
      Change the initial word "file" by clicking on it.
-    </p>
-    <p>
+    </Paragraph>
+    <Paragraph>
      Notice the wandering letters corresponds to <span class='atom'> file(X).</span> structure.
-    </p>
+    </Paragraph>
    </>)
 }
 
