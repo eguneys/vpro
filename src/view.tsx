@@ -240,7 +240,7 @@ const Atom = (props) => {
       
       <Show when={props.atom.editing === "name"}
        fallback={
-       <span class="name" onClick={_ => props.atom.editing = "name"}>{props.atom.name}</span>
+       <span class="name" onClick={_ => props.atom.editing = props.atom.allow_edit}>{props.atom.name}</span>
        }>
        <FocusInput onKeyUp={(_, value) => props.atom.editing_name(_.keyCode, value) }/>
        </Show>(

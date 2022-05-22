@@ -141,11 +141,6 @@ const RenameAndFillFiles = (props) => {
       Just put only lowercase english letters.
     </Paragraph>
     <Paragraph>
-     Change the initial word "file" to "rank" by clicking on it.
-    </Paragraph>
-    <Paragraph>
-    </Paragraph>
-    <Paragraph>
      Notice the wandering letters corresponds to <span class='atom'> file(X).</span> structure.
     </Paragraph>
    </>)

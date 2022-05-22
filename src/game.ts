@@ -20,6 +20,25 @@ function refetch(resource: Resource) {
   refetch()
 }
 
+
+const atom_mutator = (() => {
+  return {
+    change(name: string, value: string, prev: string) {
+      this.retract(name, prev)
+      this.assert(name, value)
+    },
+    assert(name: string, value: string) {
+      return _pq(_ => tau.one(`assertz(${name}(${value})).`))()
+    },
+    retract(name: string, value: string) {
+      return _pq(_ => tau.one(`retract(${name}(${value})).`))()
+    }
+  }
+})()
+
+
+
+
 let _pq = pqueue()
 
 export class Game {
@@ -52,13 +71,13 @@ export class Game {
     let _r = atom.ghost_rectangle
     this._atom_pos_hint = make_position(_r[0], _r[1])
     this._inject_drag = true
-    await _pq(_ => tau.one(`add_${atom.name}(${atom.value}).`))()
+    atom_mutator.assert(atom.name, atom.value)
     refetch(this.r_files)
     this.interaction('dup_box')
   }
 
   async dispose_atom(atom: AtomView) {
-    let res = await _pq(_ => tau.one(`remove_${atom.name}(${atom.value}).`))()
+    atom_mutator.retract(atom.name, atom.value)
     refetch(this.r_files)
   }
 
@@ -257,30 +276,31 @@ function make_atom(game: Game, atom: Atom) {
   let m_show_ghost = createMemo(() => !m_dragging() && m_delayed_hovering())
 
 
+  /*
   createEffect(on(_value[0], async (value, prev) => {
     if (prev) {
       game.interaction('word_file_name')
       game._atom_pos_hint = pos.clone
-      let res = await _pq(_ => tau.one(`change_${name}(${value}, ${prev}).`))()
-
+      atom_mutator.change(name, value, prev)
       refetch(game.r_files)
 
     }
   }))
-
+*/
 
   createEffect(on(_value[0], async (value, prev) => {
     if (prev) {
       game.interaction('word_inside_paranthesis')
       game._atom_pos_hint = pos.clone
-      let res = await _pq(_ => tau.one(`change_${name}(${value}, ${prev}).`))()
-
+      atom_mutator.change(name,value, prev)
       refetch(game.r_files)
 
     }
   }))
 
   return {
+
+    get allow_edit() { return false },
     set $ghost(ref: HTMLElement) { owrite(_$_ghost, ref) },
     set $_(ref: HTMLElement) { owrite(_$, ref) },
     get key() { return atom_key },
