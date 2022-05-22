@@ -1,3 +1,5 @@
+import { createEffect } from 'solid-js'
+
 export const Disclaimer = (props) => {
   return (<>
       <p>
@@ -11,20 +13,22 @@ export const Disclaimer = (props) => {
 
 
 export const Help = (props) => {
+
   return (<div class="overlay help">
-      <Hello/>
+    <Dynamic session={props.help} component={sessions[props.help.session - 1]}/>
       </div>)
 }
 
-const Hello = () => {
+
+const Right2Up2Down2 = (props) => {
   return (<>
     <div class="long">
       <p>
 
-      How can we state the fact that "right2 of a is c", "b is d", "c is e", "d is f", "e is g", "f is h". That is two rights of a file. We can enumerate all of the facts and write them manually, or spot the pattern: "Two rights of X is, as we imagine there exists a file Z where right of X is Z and right of Z is Y".
+      How can we state the fact that "right2 of a is c", "b is d", "c is e", "d is f", "e is g", "f is h". That is two rights of a file. We can enumerate all of the facts and write them manually, or spot the pattern: "Two rights of X is, as we imagine there is a file Z where right of X is Z and right of Z is Y".
     </p>
     <p>
-    Try to state this fact, using the comma operator as and.
+    Try to state this fact, using the comma operator as "logical and".
     </p>
     <p>
      For extra practice, state <span class="atom">left2(X-Y)</span>, <span class="atom">up2(X-Y)</span> and <span class="atom">down2(X-Y)</span> facts. Get comfortable for the next challenge where we answer the fact that "righter to a to h is the list [b,c,d,e,f,g]".
@@ -137,7 +141,7 @@ const RenameAndFillFiles = () => {
       Just put only lowercase english letters.
     </p>
     <p>
-     Change the initial word by clicking on it.
+     Change the initial word "file" by clicking on it.
     </p>
     <p>
      Notice the wandering letters corresponds to <span class='atom'> file(X).</span> structure.
@@ -145,22 +149,39 @@ const RenameAndFillFiles = () => {
    </>)
 }
 
-const PlayWithWhiteBoxes = () => {
+const PlayWithWhiteBoxes = (props) => {
   return (<>
-      <p>
+      <Paragraph completed={props.session.completed(1)}>
       Play with <span class='atom'>white boxes</span>.
       Hover on one's top left, as the orange dot appears.
       So you can drag them around.
-      </p>
-      <p>
+      </Paragraph>
+      <Paragraph completed={props.session.completed(2)}>
       Notice on hover, there is a ghost box appear.
       Drag that ghost to duplicate one.
-      </p>
-      <p>
+      </Paragraph>
+      <Paragraph completed={props.session.completed(3)}>
       Click on the orange dot that appears on top left as you hover,
-      to delete an item.
-      </p>
+      to delete a box.
+      </Paragraph>
       </>)
 }
+
+const Paragraph = (props) => {
+  let klass = () => [props.completed ? 'completed' : '']
+  return (<p class={klass()}>
+   {props.children}
+      </p>)
+}
+
+const sessions = [
+  PlayWithWhiteBoxes,
+  RenameAndFillFiles,
+  EightFilesAndOpenConsole,
+  PairedWordsXVariable,
+  RightOfFiles,
+  LeftWhenRightAnd,
+  Right2Up2Down2
+]
 
 

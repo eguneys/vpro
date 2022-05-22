@@ -43,16 +43,31 @@ export class Game {
   }
 
 
+  get help() {
+    return this.m_helps()[this.m_session()]
+  }
+
+
   async dup_atom(atom: AtomView) {
     let _r = atom.ghost_rectangle
     this._atom_pos_hint = make_position(_r[0], _r[1])
     await _pq(_ => tau.one(`add_${atom.name}(${atom.value}).`))()
     refetch(this.r_files)
+    this.interaction('dup_box')
   }
 
   async dispose_atom(atom: AtomView) {
     let res = await _pq(_ => tau.one(`remove_${atom.name}(${atom.value}).`))()
     refetch(this.r_files)
+  }
+
+  async interaction_drag_box() {
+    this.interaction('drag_box')
+  }
+
+  async interaction(s: string) {
+    let res = await _pq(_ => tau.one(`assertz(interaction(${s})).`))()
+    this.help.refetch()
   }
 
   constructor() {
@@ -127,6 +142,23 @@ export class Game {
     })
 
     this.m_atoms = createMemo(mapArray(m_atoms, _ => make_atom(this, _)))
+
+    let m_helps = createMemo(() => {
+      return [0, 1, 2, 3, 4, 5, 6]
+    })
+
+    this.m_helps = createMemo(mapArray(m_helps, _ => make_help(this, _)))
+
+    let r_session = createResource("session(X, _).", _pq(_ => tau.one(_)))
+
+    this.m_session = createMemo(() => {
+      let res = read(r_session)
+
+      if (res) {
+        return res.X[0]
+      }
+      return 1
+    })
   }
 
 }
@@ -135,6 +167,30 @@ function make_log(log: string) {
 
   return {
     get value() { return log }
+  }
+}
+
+
+function make_help(game: Game, session: number) {
+
+  let r_progress = createResource(`session(${session}, X).`, _pq(_ => tau.all(_)))
+
+  let m_progress = createMemo(() => {
+    let res = read(r_progress)
+    if (res) {
+      return res.X
+    }
+    return []
+  })
+
+  return {
+    session,
+    refetch() {
+      refetch(r_progress)
+    },
+    completed(n: number) {
+      return m_progress().includes(n + '')
+    }
   }
 }
 
@@ -261,7 +317,8 @@ function make_atom(game: Game, atom: Atom) {
         this.editing = false
       }
     },
-    dispose() {
+    async dispose() {
+      game.interaction('dispose_box')
       game.dispose_atom(this)
     }
   }

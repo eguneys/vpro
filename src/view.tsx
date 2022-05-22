@@ -176,6 +176,7 @@ const Grid = (props) => {
          decay.target.pos.vs = decay.move
          
          if (decay.drop) {
+           props.game.interaction_drag_box()
            owrite(_drag_decay, undefined)
          }
        }))
