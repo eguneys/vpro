@@ -259,6 +259,18 @@ function make_atom(game: Game, atom: Atom) {
 
   createEffect(on(_value[0], async (value, prev) => {
     if (prev) {
+      game.interaction('word_file_name')
+      game._atom_pos_hint = pos.clone
+      let res = await _pq(_ => tau.one(`change_${name}(${value}, ${prev}).`))()
+
+      refetch(game.r_files)
+
+    }
+  }))
+
+
+  createEffect(on(_value[0], async (value, prev) => {
+    if (prev) {
       game.interaction('word_inside_paranthesis')
       game._atom_pos_hint = pos.clone
       let res = await _pq(_ => tau.one(`change_${name}(${value}, ${prev}).`))()
@@ -332,9 +344,15 @@ function make_atom(game: Game, atom: Atom) {
       return m_show_ghost()
     },
 
-    editing_name(code: number, value: string) {
+    editing_value(code: number, value: string) {
       if (code === 13) {
         owrite(_value, value)
+        this.editing = false
+      }
+    },
+    editing_name(code: number, value: string) {
+      if (code === 13) {
+        owrite(_name, value)
         this.editing = false
       }
     },

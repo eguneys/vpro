@@ -1,3 +1,4 @@
+% Prolog 
 sessions(1).
 sessions(2).
 sessions(3).
@@ -22,4 +23,3 @@ counter(_) :- fail.
 file(a).
 file(b).
 file(c).
-

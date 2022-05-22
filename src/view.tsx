@@ -237,12 +237,18 @@ const Atom = (props) => {
 
   return (<atom ref={_ => setTimeout(() => props.atom.$_ = _) } class={klass().join(' ')} style={style()}>
 <div class="wrap">
-      <span class="name">{props.atom.name}</span>(
+      
+      <Show when={props.atom.editing === "name"}
+       fallback={
+       <span class="name" onClick={_ => props.atom.editing = "name"}>{props.atom.name}</span>
+       }>
+       <FocusInput onKeyUp={(_, value) => props.atom.editing_name(_.keyCode, value) }/>
+       </Show>(
       <Show when={props.atom.editing === "value"}
        fallback={
        <span class="value" onClick={_ => props.atom.editing = "value"}>{props.atom.value}</span>
        }>
-       <FocusInput onKeyUp={(_, value) => props.atom.editing_name(_.keyCode, value) }/>
+       <FocusInput onKeyUp={(_, value) => props.atom.editing_value(_.keyCode, value) }/>
        </Show>
       )
 </div>
