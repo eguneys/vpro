@@ -18,12 +18,52 @@ extrasmall {
   color: white;
   width: 45%;
   height: 100%;
-  font-size: 1.6em;
-  padding: 1em;
   box-sizing: border-box;
   right: 0;
-  overflow: auto;
+  display: flex;
+  flex-flow: column;
 }
+
+
+.help .content {
+  flex: 1 1 auto;
+  overflow: auto;
+  font-size: 1.2em;
+  padding: 0 0.2em;
+}
+
+.help h2 {
+  padding: 0.1em 0.3em;
+  border-bottom: 1px solid orange;
+  margin: 0;
+}
+
+.help .nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 0.6em;
+}
+
+
+.help .button {
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid orange;
+  padding: 0.2em;
+  vertical-align: bottom;
+}
+.help .button.pass {
+  box-shadow: 0px 0px 2px 0px orange;
+}
+
+.help .button:hover {
+  box-shadow: 0 0 0 1px orange;
+}
+
+.help .button.wide {
+  padding: 0 1em;
+}
+
 
 .help p {
   padding: 0.2em;

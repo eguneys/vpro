@@ -180,8 +180,6 @@ export class Game {
       let res = read(r_session)
 
       if (res) {
-
-        console.log(res)
         return Math.max(...res.X.map(_ => parseInt(_)))
       }
       return 1
@@ -217,6 +215,11 @@ function make_help(game: Game, session: number) {
     },
     completed(n: number) {
       return m_progress().includes(n + '')
+    },
+    nav_prev() {
+    },
+    nav_next() {
+      game.session 
     }
   }
 }

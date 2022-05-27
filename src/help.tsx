@@ -1,5 +1,12 @@
 import { createEffect } from 'solid-js'
 
+
+const titles = [
+ `Introduction`,
+ `Rename the structure`
+]
+
+
 export const Disclaimer = (props) => {
   return (<>
       <p>
@@ -15,7 +22,16 @@ export const Disclaimer = (props) => {
 export const Help = (props) => {
 
   return (<div class="overlay help">
-    <Dynamic session={props.help} component={sessions[props.help.session - 1]}/>
+      <div class="title">
+       <h2> {titles[props.help.session - 1]} </h2>
+      </div>
+      <div class="content">
+      <Dynamic session={props.help} component={sessions[props.help.session - 1]}/>
+      </div>
+      <div class="nav">
+      <span class="button" onClick={_ => props.help.nav_prev()}> Prev </span>
+      <span class="button" onClick={_ => props.help.nav_next()}> Next </span>
+      </div>
       </div>)
 }
 
@@ -118,13 +134,8 @@ const EightFilesAndOpenConsole = () => {
 <p>
    State all files a, b, c, d, e, f, g, h. So machine can answer "a is a file", or enumerate all files.
 </p>
-
-<small>
-  If you like, <button>click here</button> to open up a text area so you can just write these structures.
-</small>
-   
 <p>
-  If you want, you can skip to the solution by clicking the button below.
+  If you want, you can skip to the solution by clicking "Solution" below.
 </p>
     </>)
 }
@@ -141,7 +152,7 @@ const RenameAndFillFiles = (props) => {
       Just put only lowercase english letters.
     </Paragraph>
     <Paragraph>
-     Notice the wandering letters corresponds to <span class='atom'> file(X).</span> structure.
+     Notice the wandering letters corresponds to <span class='atom'> file(X).</span> structure. Where "X" is replaced by the lowercase word put in.
     </Paragraph>
    </>)
 }
@@ -160,6 +171,9 @@ const PlayWithWhiteBoxes = (props) => {
       <Paragraph completed={props.session.completed(3)}>
       Click on the orange dot that appears on top left as you hover,
       to delete a box.
+      </Paragraph>
+      <Paragraph>
+      Click on "Next" at the bottom to advance.
       </Paragraph>
       </>)
 }
