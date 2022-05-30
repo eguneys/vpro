@@ -43,6 +43,7 @@ export class Pro {
     this.r_whites = createResource("color(Color, X).", _pq(_ => tau.all(_)))
     let m_colors = createMemo(() => {
       let res = read(this.r_whites)
+      console.log(res)
       if (res) {
         return zip(res.Color, res.X.map(_ => _.split('-').join('')), _ => _.join('@'))
       }
