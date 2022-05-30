@@ -49,9 +49,26 @@ export class Pro {
       return []
     })
 
+    this.r_pieces = createResource("piece(Color-Role-X).", _pq(_ => tau.all(_)))
+    let m_pieces = createMemo(() => {
+      let res = read(this.r_pieces)
+      console.log(res)
+      if (res) {
+        return zip(zip(res.Color, res.Role, _ => _.join('')), res.X.map(_ => _.split('-').join('')), _ => _.join('@'))
+      }
+      return []
+    })
+
+    createEffect(() => {
+      let pieces = m_pieces()
+      if (this.oboard) {
+        console.log(pieces)
+        this.oboard.pieses = pieces
+      }
+    })
+
     createEffect(() => {
       let colors = m_colors()
-      console.log(colors)
       if (this.oboard) {
         this.oboard.squares = colors
       }
@@ -63,6 +80,7 @@ export class Pro {
     createEffect(on(this.r_consult[0], () => {
       if (!this.r_consult[0].error) {
         refetch(this.r_whites)
+        refetch(this.r_pieces)
       }
     }))
 
