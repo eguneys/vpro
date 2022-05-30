@@ -79,6 +79,9 @@ export class Pro {
 
   on_command(command: string, content: string) {
     switch (command) {
+      case ':copy':
+        navigator.clipboard.writeText(content)
+        break
       case ':w':
         owrite(this._source, content)
         file_store.set(content)
