@@ -2,12 +2,12 @@ class Tau {
 
 
   constructor() {
-    this.session = pl.create()
+    this.session = pl.create(100)
   }
 
 
   consult(program: string) {
-    this.session = pl.create()
+    this.session = pl.create(100)
     let { session } = this
     return new Promise((resolve, reject) => {
       session.consult("\n" + program + "\n", { success: () => resolve(program), error: reject })
@@ -18,7 +18,7 @@ class Tau {
   _query(query: string) {
     let { session } = this
     return new Promise((resolve, reject) => {
-      session.query(query, { success: resolve, error: reject })
+      session.query(query, { success: resolve, limit: () => reject('limit'), error: reject })
     })
   }
 
@@ -27,6 +27,7 @@ class Tau {
     return new Promise((resolve, reject) => 
                        session.answer({ success: 
                                       _ => resolve(session.format_answer(_)), 
+                                      limit: () => reject('limit'),
                                       fail: resolve,
                                       error: reject })
                       )

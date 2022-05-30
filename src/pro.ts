@@ -1,4 +1,4 @@
-import { on, createResource, batch, createEffect, createSignal, createMemo, mapArray } from 'solid-js'
+import { onError, on, createResource, batch, createEffect, createSignal, createMemo, mapArray } from 'solid-js'
 import { read, write, owrite } from './play'
 import tau from './tau'
 import { file_store } from './storage'
@@ -43,7 +43,6 @@ export class Pro {
     this.r_whites = createResource("color(Color, X).", _pq(_ => tau.all(_)))
     let m_colors = createMemo(() => {
       let res = read(this.r_whites)
-      console.log(res)
       if (res) {
         return zip(res.Color, res.X.map(_ => _.split('-').join('')), _ => _.join('@'))
       }
@@ -52,17 +51,24 @@ export class Pro {
 
     createEffect(() => {
       let colors = m_colors()
-
-
+      console.log(colors)
       if (this.oboard) {
         this.oboard.squares = colors
       }
 
     })
 
+    onError(_ => {if (this.ovim) { this.ovim.prompt = _ }})
+
     createEffect(on(this.r_consult[0], () => {
       if (!this.r_consult[0].error) {
         refetch(this.r_whites)
+      }
+    }))
+
+    createEffect(on(() => this.r_whites[0].error, (error) => {
+      if (this.ovim) {
+          this.ovim.prompt = error ? `Error: ${error}` : ''
       }
     }))
 
