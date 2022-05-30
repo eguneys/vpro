@@ -7,8 +7,31 @@ import { make_wander } from './rigid'
 import { read, owrite, DragDecay } from './play'
 
 import { Help } from './help'
+import { Pro } from './pro'
+
+import OVim from 'ovim'
+import VChessboard from 'vchessboard'
 
 const App = () => {
+
+  let pro = new Pro()
+  let $vcode,
+      $vboard
+  onMount(() => {
+   pro.ovim = OVim($vcode, { content: pro.content, on_command(command, content) { pro.on_command(command, content)}}) 
+
+   pro.oboard = VChessboard($vboard)
+   })
+
+  return (<>
+   <div class='vpro'>
+     <div ref={$vcode} class='v-code'/>
+     <div ref={$vboard} class='v-board'></div>
+   </div>
+      </>)
+}
+
+const VPro = () => {
 
   let game = new Game()
 

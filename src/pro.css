@@ -1,0 +1,21 @@
+.vpro {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.v-board {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+
+.v-code {
+  position: relative;
+  flex: 1;
+}
+
+.v-board {
+  background: #888888;
+}

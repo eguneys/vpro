@@ -1,14 +1,16 @@
 class Tau {
 
+
   constructor() {
     this.session = pl.create()
   }
 
 
   consult(program: string) {
+    this.session = pl.create()
     let { session } = this
     return new Promise((resolve, reject) => {
-      session.consult("\n" + program + "\n", { success: resolve, error: reject })
+      session.consult("\n" + program + "\n", { success: () => resolve(program), error: reject })
     })
   }
 
