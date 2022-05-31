@@ -12,6 +12,17 @@ import { Pro } from './pro'
 import OVim from 'ovim'
 import VChessboard from 'vchessboard'
 
+const VChessBoard = props => {
+  let $vboard
+  onMount(() => {
+    let api = VChessboard($vboard)
+    api.pieses = props.pieses
+    api.squares = props.moves
+    })
+
+ return (<div ref={$vboard}></div>)
+}
+
 const App = () => {
 
   let pro = new Pro()
@@ -24,11 +35,21 @@ const App = () => {
    })
 
   return (<>
-   <div class='vpro'>
-     <div ref={$vcode} class='v-code'/>
-     <div ref={$vboard} class='v-board'></div>
-   </div>
-      </>)
+      <div class='v-wrap'>
+        <div class='vpro'>
+          <div ref={$vcode} class='v-code'/>
+          <div ref={$vboard} class='v-board'></div>
+        </div>
+        <div class='vlist'>
+         <h2> {pro.list.name} </h2>
+         <ol>
+           <For each={pro.list.pieses}>{ pieses =>
+             <li><VChessBoard moves={pieses.m_moves} pieses={pieses.m_fen}/></li>
+           }</For>
+         </ol>
+        </div>
+      </div>
+    </>)
 }
 
 const VPro = () => {

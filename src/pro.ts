@@ -3,6 +3,8 @@ import { read, write, owrite } from './play'
 import tau from './tau'
 import { file_store } from './storage'
 
+import { puzzles, fen_pieses } from './data'
+
 const base_source = `
 % V Aid Prolog Language
 
@@ -99,6 +101,15 @@ export class Pro {
         this.ovim.line_klass(_-2, 'error')
       })
     }))
+
+
+    let filter = 'backRank'
+
+    let _puzzles = puzzles.filter(_ => _.tags.includes(filter))
+
+    this.list = make_list(filter, _puzzles)
+      
+
   }
 
   on_command(command: string, content: string) {
@@ -119,6 +130,38 @@ export class Pro {
           owrite(this._source, content)
         break
     }
+  }
+}
+
+function uci_s(uci: string) {
+  return [uci.slice(0, 2), uci.slice(2, 4), uci.slice(2, 4), uci.slice(2, 4)]
+}
+
+function make_list(name: string, list: Array<Puzzle>) {
+
+  let m_pieses = list.map(_ => {
+
+    let m_fen = fen_pieses(_.fen)
+
+    let last = uci_s(_.moves.split(' ')[0]),
+      solution = uci_s(_.moves.split(' ')[1])
+
+    let m_moves = last.map(_ => `orange@${_}`)
+    .concat(solution.map(_ => `black@${_}`))
+
+    return {
+      m_fen,
+      m_moves
+    }
+  })
+
+  return {
+    get name() {
+      return name
+    },
+    get pieses() {
+      return m_pieses
+    },
   }
 }
 

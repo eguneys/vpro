@@ -40,7 +40,7 @@ export default args => {
       css({minify: prod }),
       copy({ targets: [{ src: 'assets', dest: 'dist' }], copyOnce: true}),
       string({
-        include: 'src/pls/*.pl'
+        include: ['assets/*.csv', 'src/pls/*.pl'],
       }),
       htmlTemplate({
         template: 'src/index.html',

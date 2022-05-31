@@ -1,3 +1,44 @@
+.v-wrap {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%; 
+}
+
+.vlist {
+  display: flex;
+  align-items: flex-start;
+  flex-flow: column;
+  position: absolute;
+}
+
+.vlist h2 {
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+  font-size: 1em;
+  padding: 0.1em 1em;
+  background: white;
+  color: black;
+}
+
+.vlist ol {
+  width: 50vw;
+  list-style: none;
+  display: flex;
+  gap: 0.2em;
+  background: #ccc;
+  padding: 0.2em;
+  overflow-x: scroll;
+}
+
+.vlist ol li {
+  position: relative;
+  flex-basis: 20vw;
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
+}
+
 .vpro {
   display: flex;
   width: 100%;
