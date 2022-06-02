@@ -23,6 +23,17 @@ const VChessBoard = props => {
  return (<div ref={$vboard}></div>)
 }
 
+const VList = props => {
+  return (<div class='vlist'>
+    <h2> {pro.list.name} </h2>
+      <ol>
+        <For each={pro.list.pieses}>{ pieses =>
+          <li><VChessBoard moves={pieses.m_moves} pieses={pieses.m_fen}/></li>
+        }</For>
+      </ol>
+    </div>)
+}
+
 const App = () => {
 
   let pro = new Pro()
@@ -39,14 +50,6 @@ const App = () => {
         <div class='vpro'>
           <div ref={$vcode} class='v-code'/>
           <div ref={$vboard} class='v-board'></div>
-        </div>
-        <div class='vlist'>
-         <h2> {pro.list.name} </h2>
-         <ol>
-           <For each={pro.list.pieses}>{ pieses =>
-             <li><VChessBoard moves={pieses.m_moves} pieses={pieses.m_fen}/></li>
-           }</For>
-         </ol>
         </div>
       </div>
     </>)
