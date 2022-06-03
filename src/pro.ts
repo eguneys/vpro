@@ -125,6 +125,33 @@ export class Pro {
     }))
 
 
+    let filter = 'mateIn1'
+
+    let _puzzles = puzzles.filter(_ => _.tags.includes(filter))
+    let res = _puzzles.slice(0, 10).map(_ => {
+      let { fen, moves } = _
+
+      let pieses = fen_pieses(_.fen)
+
+      let [f, s] = moves.split(' ')
+
+      let src = f.slice(0, 2),
+        dst = f.slice(2, 4)
+
+      let p = pieses.find(_ => _.slice(-2) === src)
+      let c= pieses.find(_ => _.slice(-2) === dst)
+      pieses = pieses.filter(_ => _ !== p)
+      pieses = pieses.filter(_ => _ !== c)
+
+      let new_p = p.split('@')[0] + '@' + dst
+
+      pieses.push(new_p)
+
+      return pieses
+    })
+    console.log(res.map((_, i) => `board${i}([${_.map(_ => _.split('@')[0].split('').join('-') + '-(' +  _.split('@')[1].split('').join('-') + ')')}]).`).join('\n'))
+
+    this.list = make_list(filter, _puzzles)
 
   }
 
