@@ -38,6 +38,10 @@ export class Pro {
 
   constructor() {
 
+    this.list = make_list2('list', [])
+
+
+
     this._source = createSignal(file_store.get() || base_source)
 
     this.r_consult = createResource(this._source[0], _pq(_ => tau.consult(_)))
@@ -45,6 +49,7 @@ export class Pro {
     this.r_whites = createResource("color(Color, X).", _pq(_ => tau.all(_)))
     let m_colors = createMemo(() => {
       let res = read(this.r_whites)
+      console.log(res)
       if (res) {
         return zip(res.Color, res.X.map(_ => _.split('-').join('')), _ => _.join('@'))
       }
@@ -60,10 +65,26 @@ export class Pro {
       return []
     })
 
+    this.r_list = createResource("list(Ls).", _pq(_ => tau.all(_)))
+    let m_list = createMemo(() => {
+      let res = read(this.r_list)
+
+      if (!res) {
+        this.list.pieses = []
+        return
+      }
+      let pieses = res.Ls.map(_ => {
+        let [K, F1, F2, R] = _.map(_ => _.split('-').join(''))
+        return [`wk@${K}`, `wp@${F1}`, `wp@${F2}`, `br@${R}`]
+      })
+
+      this.list.pieses = pieses
+
+    })
+
     createEffect(() => {
       let pieces = m_pieces()
       if (this.oboard) {
-        console.log(pieces)
         this.oboard.pieses = pieces
       }
     })
@@ -82,6 +103,7 @@ export class Pro {
       if (!this.r_consult[0].error) {
         refetch(this.r_whites)
         refetch(this.r_pieces)
+        refetch(this.r_list)
       }
     }))
 
@@ -103,12 +125,6 @@ export class Pro {
     }))
 
 
-    let filter = 'backRank'
-
-    let _puzzles = puzzles.filter(_ => _.tags.includes(filter))
-
-    this.list = make_list(filter, _puzzles)
-      
 
   }
 
@@ -136,6 +152,20 @@ export class Pro {
 function uci_s(uci: string) {
   return [uci.slice(0, 2), uci.slice(2, 4), uci.slice(2, 4), uci.slice(2, 4)]
 }
+
+function make_list2(name: string, list: Array<Pieses>) {
+  let _pieses = createSignal(list)
+
+  return {
+    get pieses() {
+      return read(_pieses)
+    },
+    set pieses(pieses: Array<Pieses>) {
+      owrite(_pieses, pieses)
+    }
+  }
+}
+
 
 function make_list(name: string, list: Array<Puzzle>) {
 

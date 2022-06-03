@@ -73,8 +73,16 @@ class Tau {
 function format_format(n: string) {
   let res = {}
   n.replace('.', '').replace(/;$/, '').split(';').forEach(_ => {
-    _.split(',').forEach(_ => {
+    _.split(', ').forEach(_ => {
       let [key, value] = _.trim().split(' = ')
+
+      let arr_match = value.match(/\[([^\]]*)\]/)
+
+      if (arr_match) {
+
+        value = arr_match[1].split(',')
+      }
+
       res[key] ||= []
      res[key].push(value)
     })
