@@ -1,0 +1,19 @@
+squares square.yellow {
+  background: yellow;
+  opacity: 0.3;
+}
+
+squares square.red {
+  background:red;
+  opacity: 0.3;
+}
+
+squares square.green {
+  background:green;
+  opacity: 0.3;
+}
+
+squares square.blue{
+  background:blue;
+  opacity: 0.3;
+}

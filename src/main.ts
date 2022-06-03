@@ -1,5 +1,6 @@
 import './index.css'
 import './pro.css'
+import './bcolors.css'
 import '../assets/ovim.css'
 import '../assets/vchessboard.css'
 

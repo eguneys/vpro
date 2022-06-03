@@ -50,7 +50,7 @@ const App = () => {
           <div ref={$vcode} class='v-code'/>
           <div ref={$vboard} class='v-board'></div>
         </div>
-        <div style={""} class='vlist'>
+        <div style={"display: none;"} class='vlist'>
          <h2> {pro.list.name} </h2>
          <ol>
            <For each={pro.list.pieses}>{ pieses =>

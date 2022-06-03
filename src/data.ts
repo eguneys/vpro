@@ -5,7 +5,7 @@ let files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 let ranks = ['1', '2', '3', '4', '5', '6', '7', '8']
 
 export function fen_pieses(fen: string) {
-  let [_pieses] = fen.split(' ')
+  let [_pieses, turn] = fen.split(' ')
 
   let pieses = _pieses.split('/').flatMap((line, i) => {
     let rank = 7 - i
@@ -13,9 +13,17 @@ export function fen_pieses(fen: string) {
     let res = []
     for (let char of line) {
 
+      /*
+      k w b
+      K b b
+      k b w
+      K w w
+       */
+
       if (roles.indexOf(char.toLowerCase()) !== -1) {
 
         let color = char.toLowerCase() === char ? 'b' : 'w'
+        color = color === turn ? 'w' : 'b'
         let role = char.toLowerCase()
         let pos = files[file] + ranks[rank]
         res.push(`${color}${role}@${pos}`)
