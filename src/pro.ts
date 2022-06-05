@@ -56,11 +56,13 @@ export class Pro {
       return []
     })
 
+    /*
     this.r_colors = createResource("acolor(Color, Xs).", _pq(_ => tau.all(_)))
     let m_acolors = createMemo(() => {
       let res = read(this.r_colors)
       console.log(res)
     })
+   */
 
     this.r_pieces = createResource("piece(Color-Role-X).", _pq(_ => tau.all(_)))
     let m_pieces = createMemo(() => {
@@ -111,7 +113,7 @@ export class Pro {
       if (!this.r_consult[0].error) {
         refetch(this.r_whites)
         refetch(this.r_pieces)
-        refetch(this.r_colors)
+        //refetch(this.r_colors)
       }
     }))
 
@@ -133,7 +135,7 @@ export class Pro {
     }))
 
 
-    let filter = 'backRank'
+    let filter = 'mateIn2'
 
     let _puzzles = puzzles.filter(_ => _.tags.includes(filter))
     let res = _puzzles.slice(0, 10).map(_ => {
@@ -159,7 +161,7 @@ export class Pro {
 
       return pieses
     })
-    console.log(res.map((_, i) => `board${i}([${_.map(_ => _.split('@')[0].split('').join('-') + '-(' +  _.split('@')[1].split('').join('-') + ')')}]).`).join('\n'))
+    console.log(res.map((_, i) => `mateIn2${i}([${_.map(_ => _.split('@')[0].split('').join('-') + '-(' +  _.split('@')[1].split('').join('-') + ')')}]).`).join('\n'))
 
     //this.list = make_list2(filter, _puzzles)
 
