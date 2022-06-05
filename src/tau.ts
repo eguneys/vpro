@@ -70,7 +70,13 @@ class Tau {
 
 }
 
+/*
+
+   Ls = [ok(b-k-(g-1)),check(w-r-(c-6)-(w-r-(c-1)),g-1),flee(b-k-(g-1),b-k-(g-2))] ;
+ */
+
 function format_format(n: string) {
+  console.log(n)
   let res = {}
   n.replace('.', '').replace(/;$/, '').split(';').forEach(_ => {
     _.split(', ').forEach(_ => {

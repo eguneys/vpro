@@ -64,24 +64,17 @@ export class Pro {
       return []
     })
 
-      /*
-    this.r_list = createResource("list(Ls).", _pq(_ => tau.all(_)))
+    this.r_list = createResource("ls(Ls).", _pq(_ => tau.all(_)))
     let m_list = createMemo(() => {
       let res = read(this.r_list)
 
+      console.log(res)
       if (!res) {
         this.list.pieses = []
         return
       }
-      let pieses = res.Ls.map(_ => {
-        let [K, F1, F2, R] = _.map(_ => _.split('-').join(''))
-        return [`wk@${K}`, `wp@${F1}`, `wp@${F2}`, `br@${R}`]
-      })
-
-      this.list.pieses = pieses
 
     })
-       */
 
     createEffect(() => {
       let pieces = m_pieces()
@@ -104,7 +97,7 @@ export class Pro {
       if (!this.r_consult[0].error) {
         refetch(this.r_whites)
         refetch(this.r_pieces)
-        //refetch(this.r_colors)
+        refetch(this.r_list)
       }
     }))
 
