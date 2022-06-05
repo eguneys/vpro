@@ -3,6 +3,7 @@ import './pro.css'
 import './bcolors.css'
 import '../assets/ovim.css'
 import '../assets/vchessboard.css'
+import '../assets/vchessreplay.css'
 
 import { render } from 'solid-js/web'
 

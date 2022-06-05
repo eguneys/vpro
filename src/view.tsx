@@ -52,10 +52,10 @@ const App = () => {
   return (<>
       <div class='v-wrap'>
         <div class='vpro'>
-          <div ref={$vcode} class='v-code'/>
+          <div ref={$vcode} class='v-code'></div>
           <div ref={$vboard} class='v-board'></div>
+          <div ref={$vreplay} class='v-replay'></div>
         </div>
-        <div ref={$vreplay} class='v-replay'/>
       </div>
     </>)
 }
