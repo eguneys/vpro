@@ -11,6 +11,7 @@ import { Pro } from './pro'
 
 import OVim from 'ovim'
 import VChessboard from 'vchessboard'
+import VChessreplay from 'vchessreplay'
 
 const VChessBoard = props => {
   let $vboard
@@ -37,11 +38,15 @@ const App = () => {
 
   let pro = new Pro()
   let $vcode,
-      $vboard
+      $vboard,
+      $vreplay
+
   onMount(() => {
    pro.ovim = OVim($vcode, { content: pro.content, on_command(command, content) { pro.on_command(command, content)}}) 
 
    pro.oboard = VChessboard($vboard)
+
+   pro.oreplay = VChessreplay($vreplay)
    })
 
   return (<>
@@ -50,14 +55,7 @@ const App = () => {
           <div ref={$vcode} class='v-code'/>
           <div ref={$vboard} class='v-board'></div>
         </div>
-        <div style={"display: none;"} class='vlist'>
-         <h2> {pro.list.name} </h2>
-         <ol>
-           <For each={pro.list.pieses}>{ pieses =>
-             <li><VChessBoard pieses={pieses}/></li>
-           }</For>
-         </ol>
-        </div>
+        <div ref={$vreplay} class='v-replay'/>
       </div>
     </>)
 }
