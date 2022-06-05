@@ -2,12 +2,12 @@ class Tau {
 
 
   constructor() {
-    this.session = pl.create()
+    this.session = pl.create(1000)
   }
 
 
   consult(program: string) {
-    this.session = pl.create()
+    this.session = pl.create(1000)
     let { session } = this
     return new Promise((resolve, reject) => {
       session.consult("\n" + program + "\n", { success: () => resolve(program), error: reject })
