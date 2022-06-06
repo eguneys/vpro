@@ -1,7 +1,7 @@
 import { onError, on, createResource, batch, createEffect, createSignal, createMemo, mapArray } from 'solid-js'
 import { read, write, owrite } from './play'
 import tau from './tau'
-import { file_store } from './storage'
+import { cursor_store, file_store } from './storage'
 
 import { puzzles, fen_pieses } from './data'
 
@@ -35,6 +35,10 @@ export class Pro {
   }
 
   ovim!: OVim
+
+  on_mount() {
+    this.ovim.cursor = JSON.parse(cursor_store.get()).cursor
+  }
 
   constructor() {
 
@@ -171,6 +175,7 @@ export class Pro {
       case ':w':
         owrite(this._source, content)
         file_store.set(content)
+        cursor_store.set(JSON.stringify({ cursor: this.ovim.cursor }))
         break
       case ':clear':
         file_store.remove()

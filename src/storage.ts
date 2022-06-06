@@ -16,3 +16,4 @@ const make_storage = (storage: Storage) => {
 export const storage = make_storage(window.localStorage)
 
 export const file_store = storage.make('vpro-chess.pl')
+export const cursor_store = storage.make('vpro-chess.cu')

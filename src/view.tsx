@@ -47,6 +47,7 @@ const App = () => {
    pro.oboard = VChessboard($vboard)
 
    pro.oreplay = VChessreplay($vreplay)
+    pro.on_mount()
    })
 
   return (<>
