@@ -68,11 +68,23 @@ export class Pro {
     let m_list = createMemo(() => {
       let res = read(this.r_list)
 
-      console.log(res)
       if (!res) {
         this.list.pieses = []
         return
       }
+
+      let _res = res.Ls.flatMap(Ls =>
+        Ls.map(_ => {
+          let c = _.match(/check\(w-r-\(([^\)]*)\),w-r-\(([^\)]*)\)/)
+          if (c) {
+            return `${c[1]}${c[2]} { check }`
+          }
+          c = _.match(/flee\(b-k-\(([^\)]*)\),b-k-\(([^\)]*)\)/)
+          if (c) {
+            return `${c[1]}${c[2]} { flee }`
+          }
+        }))
+      console.log(_res)
 
     })
 

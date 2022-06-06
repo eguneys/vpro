@@ -25,12 +25,12 @@ class Tau {
   answer() {
     let { session } = this
     return new Promise((resolve, reject) => 
-                       session.answer({ success: 
-                                      _ => resolve(session.format_answer(_)), 
-                                      limit: () => reject('limit'),
-                                      fail: resolve,
-                                      error: reject })
-                      )
+      session.answer({ success: 
+        _ => resolve(session.format_answer(_)), 
+        limit: () => reject('limit'),
+        fail: resolve,
+        error: reject })
+    )
   }
 
   one(query: string) {
@@ -86,15 +86,56 @@ function format_format(n: string) {
 
       if (arr_match) {
 
-        value = arr_match[1].split(',')
+        value = splitNoParen(arr_match[1])
       }
 
       res[key] ||= []
-     res[key].push(value)
+      res[key].push(value)
     })
   })
 
   return res
 }
+
+
+/* https://stackoverflow.com/questions/25058134/javascript-split-a-string-by-comma-except-inside-parentheses */
+function splitNoParen(s){
+  let results = [];
+  let next;
+  let str = '';
+  let left = 0, right = 0;
+
+  function keepResult() {
+    results.push(str);
+    str = '';
+  }
+
+  for(var i = 0; i<s.length; i++) {
+    switch(s[i]) {
+      case ',': 
+        if((left === right)) {
+          keepResult();
+          left = right = 0;
+        } else {
+          str += s[i];
+        }
+        break;
+      case '(':
+        left++;
+        str += s[i];
+        break;
+      case ')':
+        right++;
+        str += s[i];
+        break;
+      default: 
+        str += s[i];
+    }
+  }
+  keepResult();
+  return results;
+}
+
+
 
 export default new Tau()
