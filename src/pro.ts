@@ -5,6 +5,8 @@ import { cursor_store, file_store } from './storage'
 
 import { puzzles, fen_pieses } from './data'
 
+import { uci_char, uci_uci } from './path'
+
 const base_source = `
 % V Aid Prolog Language
 
@@ -26,6 +28,10 @@ function find_lines(error) {
     return error.args[0].value
   }
   return error?.args?.flatMap(find_lines) || []
+}
+
+function ab(a_b: string) {
+  return a_b.split('-').join('')
 }
 
 export class Pro {
@@ -63,6 +69,7 @@ export class Pro {
     let m_pieces = createMemo(() => {
       let res = read(this.r_pieces)
       if (res) {
+        console.log(zip(zip(res.Color, res.Role, _ => _.join('')), res.X.map(_ => _.split('-').join('')), _ => _.join('@')))
         return zip(zip(res.Color, res.Role, _ => _.join('')), res.X.map(_ => _.split('-').join('')), _ => _.join('@'))
       }
       return []
@@ -72,24 +79,40 @@ export class Pro {
     let m_list = createMemo(() => {
       let res = read(this.r_list)
 
+      console.log(res)
       if (!res) {
         this.list.pieses = []
         return
       }
 
-      let _res = res.Ls.flatMap(Ls =>
-        Ls.map(_ => {
-          let c = _.match(/check\(w-r-\(([^\)]*)\),w-r-\(([^\)]*)\)/)
+      let _res = res.Ls.flatMap(Ls => {
+        let base_path = ''
+        return Ls.flatMap(_ => {
+          let c = _.match(/check\(w-r-\(([^\)]*)\)-\(w-r-\(([^\)]*)\)/)
           if (c) {
-            return `${c[1]}${c[2]} { check }`
+            let check_uci = uci_uci(c.slice(1,3).map(ab).join(''))
+            base_path += uci_char(check_uci)
+
+            return `${uci_char(check_uci)} ${check_uci.orig+check_uci.dest} { check }`
           }
           c = _.match(/flee\(b-k-\(([^\)]*)\),b-k-\(([^\)]*)\)/)
           if (c) {
-            return `${c[1]}${c[2]} { flee }`
+            let check_uci = uci_uci(c.slice(1,3).map(ab).join(''))
+            return `${base_path}${uci_char(check_uci)} ${check_uci.orig+check_uci.dest} { flee }`
           }
-        }))
-      console.log(_res)
+          return []
+        })
+      })
 
+      _res = [...new Set(_res)]
+      return _res
+    })
+
+    createEffect(() => {
+      let lines = m_list()
+      if (this.oreplay) {
+        this.oreplay.moves = lines
+      }
     })
 
     createEffect(() => {
