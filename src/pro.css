@@ -1,3 +1,4 @@
+
 .v-wrap {
   position: relative;
   display: flex;
@@ -26,6 +27,7 @@
 
 .v-replay {
   flex: 1;
+  overflow: auto;
 }
 
 .v-board {

@@ -50,8 +50,6 @@ export class Pro {
 
     this.list = make_list2('list', [])
 
-
-
     this._source = createSignal(file_store.get() || base_source)
 
     this.r_consult = createResource(this._source[0], _pq(_ => tau.consult(_)))
@@ -90,7 +88,7 @@ export class Pro {
       let _res = res.Ls.flatMap(Ls => {
         let base_path = ''
         return Ls.flatMap(_ => {
-          let c = _.match(/check_ray\(w-r-\(([^\)]*)\)-\(w-r-\(([^\)]*)\)/)
+          let c = _.match(/check_ray\(w-[r|q|b|n]-\(([^\)]*)\)-\(w-[r|q|b|n]-\(([^\)]*)\)/)
           if (c) {
             let check_uci = uci_uci(c.slice(1,3).map(ab).join(''))
 
@@ -112,6 +110,7 @@ export class Pro {
         })
       })
 
+      console.log(_res)
       _res = [...new Set(_res)]
       return _res
     })
