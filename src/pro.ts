@@ -60,6 +60,8 @@ export class Pro {
     let m_colors = createMemo(() => {
       let res = read(this.r_whites)
       if (res) {
+        console.log(res)
+
         return zip(res.Color, res.X.map(_ => _.split('-').join('')), _ => _.join('@'))
       }
       return []
@@ -88,17 +90,23 @@ export class Pro {
       let _res = res.Ls.flatMap(Ls => {
         let base_path = ''
         return Ls.flatMap(_ => {
-          let c = _.match(/check\(w-r-\(([^\)]*)\)-\(w-r-\(([^\)]*)\)/)
+          let c = _.match(/check_ray\(w-r-\(([^\)]*)\)-\(w-r-\(([^\)]*)\)/)
           if (c) {
             let check_uci = uci_uci(c.slice(1,3).map(ab).join(''))
+
+            let res= `${base_path}${uci_char(check_uci)} ${check_uci.orig+check_uci.dest} { check }`
+
             base_path += uci_char(check_uci)
 
-            return `${uci_char(check_uci)} ${check_uci.orig+check_uci.dest} { check }`
+            return res
           }
           c = _.match(/flee\(b-k-\(([^\)]*)\),b-k-\(([^\)]*)\)/)
           if (c) {
             let check_uci = uci_uci(c.slice(1,3).map(ab).join(''))
-            return `${base_path}${uci_char(check_uci)} ${check_uci.orig+check_uci.dest} { flee }`
+            let res = `${base_path}${uci_char(check_uci)} ${check_uci.orig+check_uci.dest} { flee }`
+
+            base_path += uci_char(check_uci)
+            return res
           }
           return []
         })
