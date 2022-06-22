@@ -34,7 +34,7 @@ const VList = props => {
     </div>)
 }
 
-const App = () => {
+const VPro = () => {
 
   let pro = new Pro()
   let $vcode,
@@ -61,7 +61,11 @@ const App = () => {
     </>)
 }
 
-const VPro = () => {
+const App = () => {
+  return (<VTuto/>)
+}
+
+const VTuto = () => {
 
   let game = new Game()
 
