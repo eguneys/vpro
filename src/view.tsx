@@ -23,10 +23,12 @@ const App = () => {
 
 
   return (<>
+    <div class='vlist'>
     <For each={hello.hellos}>{ hello =>
-      <span>{hello}</span>
+      <VChessBoard pieses={hello}/>
     }</For>
-      </>)
+    </div>
+    </>)
 }
 
 
@@ -41,7 +43,7 @@ const VChessBoard = props => {
     api.pieses = props.pieses
     })
 
- return (<div ref={$vboard}></div>)
+ return (<div class='vchess-wrap' ref={$vboard}></div>)
 }
 
 const VList = props => {

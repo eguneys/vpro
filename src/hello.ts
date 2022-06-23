@@ -19,7 +19,7 @@ export class Hello {
 
 const fetch_puzzles = async () =>
 console.log('here') ||
-  (await fetch(`http://localhost:8080/hello`)).json()
+  (await fetch(`http://localhost:9663/hello`, { method: 'post' })).json()
 
 const make_hello = (hello: Hello) => {
 
@@ -27,7 +27,13 @@ const make_hello = (hello: Hello) => {
     const r_puzzles = createResource(id[0], fetch_puzzles)
     const m_puzzles = createMemo(() => {
       let res = read(r_puzzles)
-      return res
+      return res?.js.map(_ => {
+        let [__, fen] = _.tb.match(/\[([^\]]*)\]/)
+        return fen.split(',').map(_ => {
+          let [___, color, role, file, rank] = _.match(/(\w)-(\w)-\((\w)-(\w)/)
+          return `${color}${role}@${file}${rank}`
+        })
+      })
     })
 
 
