@@ -13,6 +13,27 @@ import OVim from 'ovim'
 import VChessboard from 'vchessboard'
 import VChessreplay from 'vchessreplay'
 
+import { Hello } from './hello'
+
+
+
+const App = () => {
+
+  let hello = new Hello()
+
+
+  return (<>
+    <For each={hello.hellos}>{ hello =>
+      <span>{hello}</span>
+    }</For>
+      </>)
+}
+
+
+
+
+
+
 const VChessBoard = props => {
   let $vboard
   onMount(() => {
@@ -34,7 +55,7 @@ const VList = props => {
     </div>)
 }
 
-const App = () => {
+const OldProStuff = () => {
 
   let pro = new Pro()
   let $vcode,
