@@ -25,13 +25,28 @@ const App = () => {
   return (<>
     <div class='vlist'>
     <For each={hello.hellos}>{ hello =>
-      <VChessBoard pieses={hello}/>
+      <div class='vlist-item'>
+        <VChessBoard pieses={hello.board}/>
+        <VChessReplay moves={hello.moves}/>
+      </div>
     }</For>
     </div>
     </>)
 }
 
 
+
+
+
+const VChessReplay = props => {
+  let $vreplay
+  onMount(() => {
+    let api = VChessreplay($vreplay)
+    api.moves = props.moves
+    })
+
+ return (<div class='vreplay-wrap' ref={$vreplay}></div>)
+}
 
 
 

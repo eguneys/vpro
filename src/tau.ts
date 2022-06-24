@@ -100,7 +100,7 @@ function format_format(n: string) {
 
 
 /* https://stackoverflow.com/questions/25058134/javascript-split-a-string-by-comma-except-inside-parentheses */
-function splitNoParen(s){
+export function splitNoParen(s){
   let results = [];
   let next;
   let str = '';
