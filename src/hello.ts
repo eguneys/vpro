@@ -1,4 +1,4 @@
-import { createSignal, createMemo, createEffect, createResource, on } from 'solid-js'
+import { createSignal, createResource, createMemo } from 'solid-js'
 import { read, write, owrite } from './play'
 import { splitNoParen } from './tau'
 import { uci_uci, uci_char } from './path'
@@ -34,7 +34,6 @@ export class Hello {
 
 
 const fetch_puzzles = async () =>
-console.log('here') ||
   (await fetch(`http://localhost:9663/hello`, { method: 'post' })).json()
 
 const make_hello = (hello: Hello) => {
@@ -79,14 +78,17 @@ const make_hello = (hello: Hello) => {
             return path
           }, path)
         }, '')
-        console.log(res_moves)
 
         let [, fen] = _.tb.match(/\[([^\]]*)\]/)
+
         let board = fen.split(',').map(_ => {
           let [, color, role, file, rank] = _.match(/(\w)-(\w)-\((\w)-(\w)/)
           return `${color}${role}@${file}${rank}`
         })
         return {
+          on_hover(path) {
+            console.log(path)
+          },
           moves: res_moves,
           board
         }

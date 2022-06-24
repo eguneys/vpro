@@ -27,7 +27,7 @@ const App = () => {
     <For each={hello.hellos}>{ hello =>
       <div class='vlist-item'>
         <VChessBoard pieses={hello.board}/>
-        <VChessReplay moves={hello.moves}/>
+        <VChessReplay moves={hello.moves} on_hover={hello.on_hover}/>
       </div>
     }</For>
     </div>
@@ -41,7 +41,7 @@ const App = () => {
 const VChessReplay = props => {
   let $vreplay
   onMount(() => {
-    let api = VChessreplay($vreplay)
+    let api = VChessreplay($vreplay, { on_hover(path) { props.on_hover?.(path) } })
     api.moves = props.moves
     })
 
