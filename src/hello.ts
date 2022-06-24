@@ -68,17 +68,18 @@ const make_hello = (hello: Hello) => {
         ]
 
         let res_moves = []
-        mss.reduce((path, move) => {
+        mss.reduce((path, ms) => {
 
-          let { theme, moves } = move
+          let { theme, moves } = ms
 
-          let pp = uci_char(uci_uci(move))
-          return `${pp} ${move} { ${theme} }`
-          _moves.push(move_path(move))
-        })
-
-
-
+          return moves.reduce((path, move) => {
+            let pp = uci_char(uci_uci(move))
+            path += pp
+            res_moves.push(`${path} ${move} { ${theme} }`)
+            return path
+          }, path)
+        }, '')
+        console.log(res_moves)
 
         let [, fen] = _.tb.match(/\[([^\]]*)\]/)
         let board = fen.split(',').map(_ => {
@@ -86,7 +87,7 @@ const make_hello = (hello: Hello) => {
           return `${color}${role}@${file}${rank}`
         })
         return {
-          moves,
+          moves: res_moves,
           board
         }
       })
